@@ -12,9 +12,10 @@ import UIEditText from '../../Component/UIEditText';
 
 const Bookmark = () => {
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null)
-    const [image, setImage] = useState(null)
-    const [title, setTitle] = useState(null)
-    const [content, setContent] = useState(null)
+    const [image, setImage] = useState('')
+    const [name, setName] = useState('')
+    const [quantity, setQuantity] = useState('')
+    const [price, setPrice] = useState('')
     // useEffect(() => {
     //     (async () => {
     //         const galleryStatus = await ImagePicker.requestCameraPermissionsAsync()
@@ -30,7 +31,7 @@ const Bookmark = () => {
             quality: 1
         })
 
-        console.log(result)
+        setImage(result.assets[0].uri)
 
         const formData = new FormData()
         formData.append('image', {
@@ -39,13 +40,16 @@ const Bookmark = () => {
             name: 'image.jpg'
         })
 
-        const res = await AxiosIntance('multipart/form-data').post('media/upload', formData)
-        if (res.error == false) {
-            setImage(res.data.path)
-            ToastAndroid.show('Upload hình ảnh thành công', ToastAndroid.SHORT)
-        } else {
-            ToastAndroid.show('Upload hình ảnh thất bại', ToastAndroid.SHORT)
-        }
+        // console.log("formData: ",formData)
+
+        // const res = await AxiosIntance('api/product/upload').post('image', formData)
+        // console.log("res: ", res)
+        // if (res.result == true) {
+        //     setImage(res.url)
+        //     ToastAndroid.show('Upload hình ảnh thành công', ToastAndroid.SHORT)
+        // } else {
+        //     ToastAndroid.show('Upload hình ảnh thất bại', ToastAndroid.SHORT)
+        // }
         
     }
 
@@ -57,7 +61,9 @@ const Bookmark = () => {
             quality: 1
         })
 
-        console.log(result)
+        console.log("result: ",result.assets[0].uri)
+        setImage(result.assets[0].uri)
+        
 
         const formData = new FormData()
         formData.append('image', {
@@ -66,29 +72,36 @@ const Bookmark = () => {
             name: 'image.jpg'
         })
 
-        const res = await AxiosIntance('multipart/form-data').post('media/upload', formData)
-        if (res.error == false) {
-            setImage(res.data.path)
-            ToastAndroid.show('Upload hình ảnh thành công', ToastAndroid.SHORT)
-        }
-         else {
-            ToastAndroid.show('Upload hình ảnh thất bại', ToastAndroid.SHORT)
-        }
+        console.log("formData: ",formData)
+
+        // const res = await AxiosIntance().post('api/product/upload', result.assets[0].uri)
+        // console.log("res: ",res)
+        // if (res.result == true) {
+        //     setImage(res.url)
+        //     ToastAndroid.show('Upload hình ảnh thành công', ToastAndroid.SHORT)
+        // }
+        //  else {
+        //     ToastAndroid.show('Upload hình ảnh thất bại', ToastAndroid.SHORT)
+        // }
     }
 
     const PostNew = async () => {
-        const res = await AxiosIntance().post("articles", {
-          title: title,
-          content: content,
+        const res = await AxiosIntance().post("api/product/upload", {
+          name: name,
+          quantity: quantity,
           image: image,
+          price: price,
+
         });
-        if (res.error == false) {
-            setImage(res.data.path)
+        if (res.result == true) {
+            
             ToastAndroid.show('Đăng tin thành công', ToastAndroid.SHORT)
         }
          else {
             ToastAndroid.show('Đăng tin thất bại', ToastAndroid.SHORT)
         }
+
+        await AxiosIntance().get("api/product");
     }
 
   return (
@@ -122,9 +135,12 @@ const Bookmark = () => {
       <View style={{ marginTop: 10, marginBottom: 10 }}>
         <UIButton backgroundColor={COLOR.primary} title="Chọn ảnh" onPress={pickImage}/>
       </View>
-      <UIEditText holder="Tiêu đề"  changeText={setTitle}/>
+      <UIEditText holder="Name"  changeText={setName}/>
       <View style={{ marginBottom: 10, marginTop: 10 }}>
-        <UIEditText holder="Nội dung" changeText={setContent}/>
+        <UIEditText holder="Quantity" changeText={setQuantity}/>
+      </View>
+      <View style={{ marginBottom: 10, marginTop: 10 }}>
+        <UIEditText holder="Price" changeText={setPrice}/>
       </View>
 
       <UIButton backgroundColor={COLOR.primary} title="Đăng bài" onPress={PostNew}/>

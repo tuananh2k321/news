@@ -1,4 +1,4 @@
-import React , {useEffect, useState} from 'react';
+import React , {useCallback, useEffect, useState} from 'react';
 import { Text,View,FlatList, ActivityIndicator, TextInput, TouchableOpacity , Image} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -9,7 +9,6 @@ const Explore = (props) => {
    const [data, setData] = useState([])
    const [searchText, setSearchText] = useState([])
    const [loading, isLoading] = useState(true)
-  
    const{navigation} = props
 
     useEffect(() => {
@@ -18,13 +17,11 @@ const Explore = (props) => {
           if (res.result) {
             setData(res.products)
             isLoading(false)
-            console.log("DATA: ",data)
           }
-          
         };
-        getNews();
-        return () => {};
-      }, []);
+
+        getNews()
+      }, [data])
 
   // let timeOut = null;
   // const countDownSearch = (text) => {
@@ -75,9 +72,10 @@ const Explore = (props) => {
                 <ItemUser
                   news={item}
                   navigation = {navigation}
+
                 />
               )}
-              keyExtractor={(eachNews) => eachNews.name}
+              keyExtractor={(eachNews) => eachNews._id}
               showsVerticalScrollIndicator={false}
             />
           </View>
